@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DSA Problems - TODO Tracker</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .stat-box {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #666;
+            text-transform: uppercase;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: #e0e0e0;
+            border-radius: 3px;
+            margin-top: 10px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            border-radius: 3px;
+            transition: width 0.3s ease;
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            background: #667eea;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 14px;
+        }
+
+        button:hover {
+            background: #764ba2;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        button.secondary {
+            background: #6c757d;
+        }
+
+        button.secondary:hover {
+            background: #5a6268;
+        }
+
+        button.danger {
+            background: #dc3545;
+        }
+
+        button.danger:hover {
+            background: #c82333;
+        }
+
+        .categories {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .category {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s;
+        }
+
+        .category:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .category-header {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .category-title {
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .category-count {
+            font-size: 13px;
+            opacity: 0.9;
+        }
+
+        .category-progress {
+            background: white;
+            padding: 20px;
+            border-top: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 12px;
+            color: #666;
+        }
+
+        .category-progress-bar {
+            flex: 1;
+            margin: 0 15px;
+            height: 4px;
+            background: #e0e0e0;
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .category-problems {
+            padding: 15px 20px;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        .problem {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 12px 0;
+            border-bottom: 1px solid #f0f0f0;
+            transition: background 0.2s;
+        }
+
+        .problem:last-child {
+            border-bottom: none;
+        }
+
+        .problem:hover {
+            background: #f8f9fa;
+            padding: 12px 8px;
+            border-radius: 4px;
+        }
+
+        .problem-checkbox {
+            margin-top: 3px;
+            cursor: pointer;
+            width: 20px;
+            height: 20px;
+            accent-color: #667eea;
+        }
+
+        .problem-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .problem-text {
+            font-size: 14px;
+            color: #333;
+            margin-bottom: 4px;
+            word-break: break-word;
+        }
+
+        .problem.completed .problem-text {
+            color: #999;
+            text-decoration: line-through;
+        }
+
+        .problem-link {
+            color: #667eea;
+            text-decoration: none;
+            font-size: 12px;
+            word-break: break-all;
+        }
+
+        .problem-link:hover {
+            text-decoration: underline;
+        }
+
+        .problem.completed .problem-link {
+            color: #ccc;
+        }
+
+        .problem-delete {
+            background: #dc3545;
+            color: white;
+            border: none;
+            width: 24px;
+            height: 24px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            flex-shrink: 0;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .problem:hover .problem-delete {
+            opacity: 1;
+        }
+
+        .problem-delete:hover {
+            background: #c82333;
+        }
+
+        .empty-message {
+            text-align: center;
+            color: #999;
+            padding: 40px 20px;
+            font-size: 14px;
+        }
+
+        .success-message {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .success-message.show {
+            display: block;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .filter-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        .filter-buttons button {
+            padding: 8px 16px;
+            font-size: 13px;
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+
+        .filter-buttons button.active {
+            background: #667eea;
+            color: white;
+        }
+
+        @media (max-width: 768px) {
+            .categories {
+                grid-template-columns: 1fr;
+            }
+
+            .stats {
+                grid-template-columns: 1fr;
+            }
+
+            .problem-delete {
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="success-message" id="successMessage">
+            ✓ Progress saved successfully!
+        </div>
+
+        <header>
+            <h1>📚 DSA Problems - TODO Tracker</h1>
+            <p style="color: #666; margin-top: 5px;">Track your progress on essential Data Structures & Algorithms problems</p>
+
+            <div class="stats">
+                <div class="stat-box">
+                    <div class="stat-label">Total Problems</div>
+                    <div class="stat-value" id="totalStat">0</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-label">Completed</div>
+                    <div class="stat-value" id="completedStat">0</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-label">In Progress</div>
+                    <div class="stat-value" id="inProgressStat">0</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-label">Progress</div>
+                    <div class="stat-value" id="percentStat">0%</div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="overallProgressBar" style="width: 0%"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="controls">
+                <button onclick="resetAllProgress()" class="danger">Reset All Progress</button>
+                <button onclick="exportProgress()" class="secondary">Export Progress</button>
+                <button onclick="printAllProblems()" class="secondary">Print All</button>
+            </div>
+        </header>
+
+        <div class="filter-buttons">
+            <button class="active" onclick="filterProblems('all')">All Problems</button>
+            <button onclick="filterProblems('incomplete')">To Do</button>
+            <button onclick="filterProblems('completed')">Completed</button>
+        </div>
+
+        <div class="categories" id="categoriesContainer"></div>
+    </div>
+
+    <script>
+        const STORAGE_KEY = 'dsa-problems-progress';
+        const problems = {
+            'Arrays': [
+                { title: 'Find the smallest number in an array', url: 'https://takeuforward.org/data-structure/find-the-smallest-element-in-an-array/' },
+                { title: 'Find the largest number in an array', url: 'https://takeuforward.org/data-structure/find-the-largest-element-in-an-array/' },
+                { title: 'Second Smallest and Second Largest element in an array', url: 'https://takeuforward.org/data-structure/find-second-smallest-and-second-largest-element-in-an-array/' },
+                { title: 'Reverse a given array', url: 'https://takeuforward.org/data-structure/reverse-a-given-array/' },
+                { title: 'Count frequency of each element in an array', url: 'https://takeuforward.org/data-structure/count-frequency-of-each-element-in-the-array/' },
+                { title: 'Rearrange array in increasing-decreasing order', url: 'https://takeuforward.org/data-structure/rearrange-array-in-increasing-decreasing-order/' },
+                { title: 'Calculate sum of the elements of the array', url: 'https://takeuforward.org/arrays/calculate-sum-of-the-elements-of-the-array/' },
+                { title: 'Rotate array by K elements - Block Swap Algorithm', url: 'https://takeuforward.org/data-structure/rotate-array-by-k-elements-block-swap-algorithm/' },
+                { title: 'Average of all elements in an array', url: 'https://takeuforward.org/data-structure/average-of-all-the-elements-in-the-array/' },
+                { title: 'Find the median of the given array', url: 'https://takeuforward.org/data-structure/find-median-of-the-given-array/' },
+                { title: 'Remove duplicates from a sorted array', url: 'https://takeuforward.org/data-structure/remove-duplicates-in-place-from-sorted-array/' },
+                { title: 'Remove duplicates from unsorted array', url: 'https://takeuforward.org/data-structure/remove-duplicates-from-an-unsorted-array/' },
+                { title: 'Adding Element in an array', url: 'https://takeuforward.org/data-structure/adding-element-in-an-array/' },
+                { title: 'Find all repeating elements in an array', url: 'https://takeuforward.org/data-structure/find-all-repeating-elements-in-an-array/' },
+                { title: 'Find all non-repeating elements in an array', url: 'https://takeuforward.org/data-structure/find-all-the-non-repeating-elements-in-an-array/' },
+                { title: 'Find all symmetric pairs in array', url: 'https://takeuforward.org/data-structure/find-all-symmetric-pairs-in-the-array-of-pairs/' },
+                { title: 'Maximum product subarray in an array', url: 'https://takeuforward.org/data-structure/maximum-product-subarray-in-an-array/' },
+                { title: 'Replace each element of the array by its rank in the array', url: 'https://takeuforward.org/data-structure/replace-elements-by-its-rank-in-the-array/' },
+                { title: 'Sorting elements of an array by frequency', url: 'https://takeuforward.org/data-structure/sort-elements-of-an-array-by-frequency/' },
+                { title: 'Rotation of elements of array- left and right', url: 'https://takeuforward.org/data-structure/rotate-array-by-k-elements/' },
+                { title: 'Finding equilibrium index of an array', url: 'https://takeuforward.org/data-structure/finding-equilibrium-index-in-an-array/' },
+                { title: 'Finding Circular rotation of an array by K positions', url: '' },
+                { title: 'Sort an array according to the order defined by another array', url: '' },
+                { title: 'Search an element in an array', url: 'https://takeuforward.org/data-structure/search-an-element-in-an-array-program-cpp-java/' },
+                { title: 'Check if Array is a subset of another array or not', url: 'https://takeuforward.org/data-structure/check-if-array-is-subset-of-another-array/' }
+            ],
+            'Numbers': [
+                { title: 'Check if a number is palindrome or not', url: 'https://takeuforward.org/data-structure/check-if-a-number-is-palindrome-or-not/' },
+                { title: 'Find all Palindrome numbers in a given range', url: 'https://takeuforward.org/data-structure/find-all-palindrome-numbers-in-a-given-range/' },
+                { title: 'Check if a number is prime or not', url: 'https://takeuforward.org/data-structure/check-if-a-number-is-prime-or-not/' },
+                { title: 'Prime numbers in a given range', url: 'https://takeuforward.org/data-structure/prime-numbers-in-a-given-range/' },
+                { title: 'Check if a number is armstrong number of not', url: 'https://takeuforward.org/maths/check-if-a-number-is-armstrong-number-or-not/' },
+                { title: 'Check if a number is perfect number', url: 'https://takeuforward.org/data-structure/check-whether-a-number-is-perfect-number-or-not/' },
+                { title: 'Even or Odd', url: 'https://takeuforward.org/arrays/check-whether-a-given-number-is-even-or-odd/' },
+                { title: 'Check weather a given number is positive or negative', url: 'https://takeuforward.org/data-structure/check-whether-a-number-is-positive-or-negative/' },
+                { title: 'Sum of first N natural numbers', url: 'https://takeuforward.org/data-structure/sum-of-first-n-natural-numbers/' },
+                { title: 'Find Sum of AP Series', url: 'https://takeuforward.org/data-structure/find-sum-of-ap-series/' },
+                { title: 'Program to find sum of GP Series', url: 'https://takeuforward.org/data-structure/program-to-find-sum-of-gp-series/' },
+                { title: 'Greatest of two numbers', url: 'https://takeuforward.org/maths/greatest-of-two-numbers/' },
+                { title: 'Greatest of three numbers', url: 'https://takeuforward.org/arrays/greatest-of-three-numbers/' },
+                { title: 'Leap Year or not', url: 'https://takeuforward.org/data-structure/check-if-given-year-is-a-leap-year-or-not/' },
+                { title: 'Reverse digits of a number', url: 'https://takeuforward.org/data-structure/reverse-digits-of-a-number/' },
+                { title: 'Maximum and Minimum digit in a number', url: 'https://takeuforward.org/data-structure/maximum-and-minimum-digit-in-a-number/' },
+                { title: 'Print Fibonacci upto Nth Term', url: 'https://takeuforward.org/arrays/print-fibonacci-series-up-to-nth-term/' },
+                { title: 'Factorial of a number', url: 'https://takeuforward.org/data-structure/factorial-of-a-number-iterative-and-recursive/' },
+                { title: 'Power of a number', url: 'https://takeuforward.org/data-structure/calculate-the-power-of-a-number-binary-exponentiation/' },
+                { title: 'Factors of a given number', url: 'https://takeuforward.org/combinatorics/factors-of-a-given-number/' },
+                { title: 'Print all prime factors of the given number', url: 'https://takeuforward.org/data-structure/print-all-prime-factors-of-the-given-number/' },
+                { title: 'Check if a number is a strong number or not', url: 'https://takeuforward.org/data-structure/check-if-a-number-is-a-strong-number-or-not/' },
+                { title: 'Check if a Number is Automorphic', url: 'https://takeuforward.org/data-structure/check-if-a-number-is-automorphic-number/' },
+                { title: 'GCD of two numbers', url: 'https://takeuforward.org/data-structure/find-gcd-of-two-numbers/' },
+                { title: 'LCM of two numbers', url: 'https://takeuforward.org/data-structure/find-lcm-of-two-numbers/' },
+                { title: 'Check if a number is Harshad number', url: 'https://takeuforward.org/data-structure/check-if-the-given-number-is-harshador-niven-number/' },
+                { title: 'Check if the number is abundant number or not', url: 'https://takeuforward.org/data-structure/check-if-the-number-is-an-abundant-number-or-not/' },
+                { title: 'Sum of digits of a number', url: 'https://takeuforward.org/data-structure/sum-of-digits-of-a-number/' },
+                { title: 'Sum of numbers in the given range', url: 'https://takeuforward.org/data-structure/find-the-sum-of-numbers-in-the-given-range/' },
+                { title: 'Permutations in which N people can occupy R seats in a classroom', url: 'https://takeuforward.org/data-structure/permutations-in-which-n-people-can-occupy-r-seats/' },
+                { title: 'Program to add two fractions', url: 'https://takeuforward.org/data-structure/program-to-add-two-fractions/' },
+                { title: 'Replace all 0s with 1s in a given integer', url: 'https://takeuforward.org/data-structure/replace-all-the-0s-with-1-in-a-given-integer/' },
+                { title: 'Can a number be expressed as a sum of two prime numbers', url: 'https://takeuforward.org/data-structure/express-given-number-as-sum-of-two-prime-numbers/' },
+                { title: 'Calculate the area of circle', url: 'https://takeuforward.org/data-structure/calculate-the-area-of-the-circle/' },
+                { title: 'Program to find roots of a Quadratic Equation', url: 'https://takeuforward.org/data-structure/program-to-find-roots-of-a-quadratic-equation/' }
+            ],
+            'Number System': [
+                { title: 'Convert Binary to Decimal', url: 'https://takeuforward.org/data-structure/convert-binary-to-decimal/' },
+                { title: 'Convert binary to octal', url: 'https://takeuforward.org/data-structure/convert-binary-to-octal/' },
+                { title: 'Decimal to Binary conversion', url: 'https://takeuforward.org/maths/convert-decimal-to-binary-number/' },
+                { title: 'Convert decimal to octal', url: 'https://takeuforward.org/uncategorized/convert-decimal-to-octal/' },
+                { title: 'Convert octal to binary', url: 'https://takeuforward.org/data-structure/convert-octal-to-binary/' },
+                { title: 'Convert octal to decimal', url: 'https://takeuforward.org/data-structure/convert-octal-to-decimal/' },
+                { title: 'Convert digits/numbers to words', url: 'https://takeuforward.org/data-structure/convert-digits-numbers-to-words/' }
+            ],
+            'Sorting': [
+                { title: 'Bubble Sort Algorithm', url: 'https://takeuforward.org/data-structure/bubble-sort-algorithm/' },
+                { title: 'Selection Sort Algorithm', url: 'https://takeuforward.org/sorting/selection-sort-algorithm/' },
+                { title: 'Insertion Sort Algorithm', url: 'https://takeuforward.org/data-structure/insertion-sort-algorithm/' },
+                { title: 'Quick Sort Algorithm', url: 'https://takeuforward.org/data-structure/quick-sort-algorithm/' },
+                { title: 'Merge sort algorithm', url: 'https://takeuforward.org/data-structure/merge-sort-algorithm/' }
+            ],
+            'Strings': [
+                { title: 'Check if a given string is palindrome or not', url: 'https://takeuforward.org/data-structure/check-if-the-given-string-is-palindrome-or-not/' },
+                { title: 'Count number of vowels, consonants, spaces in String', url: 'https://takeuforward.org/data-structure/count-number-of-vowels-consonants-spaces-in-string/' },
+                { title: 'Find the ASCII value of a character', url: 'https://takeuforward.org/data-structure/find-the-ascii-value-of-a-character/' },
+                { title: 'Remove all vowels from the string', url: 'https://takeuforward.org/data-structure/remove-all-vowels-from-the-string/' },
+                { title: 'Remove spaces from a string', url: 'https://takeuforward.org/data-structure/remove-spaces-from-a-string/' },
+                { title: 'Remove characters from a string except alphabets', url: 'https://takeuforward.org/data-structure/remove-characters-from-a-string-except-alphabets/' },
+                { title: 'Reverse a String', url: 'https://takeuforward.org/data-structure/reverse-a-string/' },
+                { title: 'Remove brackets from an algebraic expression', url: 'https://takeuforward.org/data-structure/remove-brackets-from-an-algebraic-expression/' },
+                { title: 'Sum of the numbers in a String', url: 'https://takeuforward.org/data-structure/sum-of-the-numbers-in-a-string/' },
+                { title: 'Capitalize first and last character of each word', url: 'https://takeuforward.org/string/capitalize-first-and-last-character-of-each-word-of-a-string/' },
+                { title: 'Calculate frequency of characters in a string', url: 'https://takeuforward.org/data-structure/calculate-frequency-of-characters-in-a-string/' },
+                { title: 'Find Non-repeating characters of a String', url: 'https://takeuforward.org/data-structure/find-non-repeating-characters-of-a-string/' },
+                { title: 'Check if two strings are anagram of each other', url: 'https://takeuforward.org/data-structure/check-if-two-strings-are-anagrams-of-each-other/' },
+                { title: 'Count common sub-sequence in two strings', url: '' },
+                { title: 'Check if two strings match where one string contains wildcard characters', url: '' },
+                { title: 'Return maximum occurring character in the input string', url: 'https://takeuforward.org/data-structure/maximum-occurring-character-in-a-string/' },
+                { title: 'Remove all duplicates from the input string', url: 'https://takeuforward.org/data-structure/remove-all-duplicates-from-a-string/' },
+                { title: 'Print all the duplicates in the input string', url: 'https://takeuforward.org/data-structure/print-all-the-duplicates-in-the-string/' },
+                { title: 'Remove characters from first string present in the second string', url: 'https://takeuforward.org/data-structure/remove-characters-from-first-string-present-in-the-second-string/' },
+                { title: 'Change every letter with the next lexicographic alphabet in the given string', url: 'https://takeuforward.org/data-structure/change-every-letter-with-next-lexicographic-alphabet/' },
+                { title: 'Write a program to find the largest word in a given string', url: 'https://takeuforward.org/data-structure/find-the-largest-word-in-a-string/' },
+                { title: 'Write a program to sort characters in a string', url: 'https://takeuforward.org/data-structure/write-a-program-to-sort-characters-in-a-string/' },
+                { title: 'Count number of words in a given string', url: 'https://takeuforward.org/data-structure/count-the-number-of-words-in-a-given-string/' },
+                { title: 'Write a program to find a word in a given string which has the highest number of repeated letters', url: 'https://takeuforward.org/data-structure/find-word-with-highest-number-of-repeated-letters-in-string/' },
+                { title: 'Change case of each character in a string', url: 'https://takeuforward.org/data-structure/change-case-of-each-character-in-a-string/' },
+                { title: 'Concatenate one string to another', url: 'https://takeuforward.org/data-structure/concatenate-one-string-to-another/' },
+                { title: 'Write a program to find a substring within a string. If found display its starting position', url: 'https://takeuforward.org/data-structure/find-the-position-of-a-substring-within-a-string/' },
+                { title: 'Reverse words in a string', url: 'https://takeuforward.org/data-structure/reverse-words-in-a-string/' }
+            ]
+        };
+
+        let progress = {};
+        let currentFilter = 'all';
+
+        function initializeProgress() {
+            const savedProgress = localStorage.getItem(STORAGE_KEY);
+            if (savedProgress) {
+                progress = JSON.parse(savedProgress);
+            } else {
+                Object.keys(problems).forEach(category => {
+                    progress[category] = problems[category].map(() => false);
+                });
+                saveProgress();
+            }
+            render();
+        }
+
+        function saveProgress() {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(progress));
+            showSuccessMessage();
+        }
+
+        function showSuccessMessage() {
+            const msg = document.getElementById('successMessage');
+            msg.classList.add('show');
+            setTimeout(() => msg.classList.remove('show'), 2000);
+        }
+
+        function toggleProblem(category, index) {
+            progress[category][index] = !progress[category][index];
+            saveProgress();
+            render();
+        }
+
+        function deleteProblem(category, index) {
+            progress[category][index] = false;
+            saveProgress();
+            render();
+        }
+
+        function getStats() {
+            let total = 0, completed = 0;
+            Object.keys(problems).forEach(category => {
+                total += problems[category].length;
+                completed += progress[category].filter(p => p).length;
+            });
+            const percent = total > 0 ? Math.round((completed / total) * 100) : 0;
+            return { total, completed, percent, inProgress: total - completed };
+        }
+
+        function updateStats() {
+            const { total, completed, percent, inProgress } = getStats();
+            document.getElementById('totalStat').textContent = total;
+            document.getElementById('completedStat').textContent = completed;
+            document.getElementById('inProgressStat').textContent = inProgress;
+            document.getElementById('percentStat').textContent = percent + '%';
+            document.getElementById('overallProgressBar').style.width = percent + '%';
+        }
+
+        function filterProblems(filter) {
+            currentFilter = filter;
+            document.querySelectorAll('.filter-buttons button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            render();
+        }
+
+        function shouldShowProblem(isCompleted) {
+            if (currentFilter === 'all') return true;
+            if (currentFilter === 'completed') return isCompleted;
+            if (currentFilter === 'incomplete') return !isCompleted;
+            return true;
+        }
+
+        function render() {
+            const container = document.getElementById('categoriesContainer');
+            container.innerHTML = '';
+
+            Object.keys(problems).forEach((category) => {
+                const categoryProblems = problems[category];
+                const categoryProgress = progress[category];
+                const completed = categoryProgress.filter(p => p).length;
+                const total = categoryProblems.length;
+                const percent = total > 0 ? Math.round((completed / total) * 100) : 0;
+
+                const categoryDiv = document.createElement('div');
+                categoryDiv.className = 'category';
+
+                const header = document.createElement('div');
+                header.className = 'category-header';
+                header.innerHTML = `
+                    <div>
+                        <div class="category-title">${category}</div>
+                        <div class="category-count">${completed}/${total} completed</div>
+                    </div>
+                `;
+
+                const progressDiv = document.createElement('div');
+                progressDiv.className = 'category-progress';
+                progressDiv.innerHTML = `
+                    <span>${percent}%</span>
+                    <div class="category-progress-bar">
+                        <div class="progress-fill" style="width: ${percent}%; background: linear-gradient(90deg, #667eea, #764ba2);"></div>
+                    </div>
+                    <span>${completed}/${total}</span>
+                `;
+
+                const problemsDiv = document.createElement('div');
+                problemsDiv.className = 'category-problems';
+
+                let hasVisibleProblems = false;
+                categoryProblems.forEach((problem, index) => {
+                    const isCompleted = categoryProgress[index];
+                    if (!shouldShowProblem(isCompleted)) return;
+                    hasVisibleProblems = true;
+
+                    const problemDiv = document.createElement('div');
+                    problemDiv.className = 'problem' + (isCompleted ? ' completed' : '');
+
+                    const checkbox = document.createElement('input');
+                    checkbox.type = 'checkbox';
+                    checkbox.className = 'problem-checkbox';
+                    checkbox.checked = isCompleted;
+                    checkbox.onchange = () => toggleProblem(category, index);
+
+                    const infoDiv = document.createElement('div');
+                    infoDiv.className = 'problem-info';
+
+                    const titleDiv = document.createElement('div');
+                    titleDiv.className = 'problem-text';
+                    titleDiv.textContent = problem.title;
+                    infoDiv.appendChild(titleDiv);
+
+                    if (problem.url) {
+                        const linkDiv = document.createElement('a');
+                        linkDiv.href = problem.url;
+                        linkDiv.target = '_blank';
+                        linkDiv.rel = 'noopener noreferrer';
+                        linkDiv.className = 'problem-link';
+                        linkDiv.textContent = 'View Solution →';
+                        infoDiv.appendChild(linkDiv);
+                    }
+
+                    const deleteBtn = document.createElement('button');
+                    deleteBtn.className = 'problem-delete';
+                    deleteBtn.textContent = '×';
+                    deleteBtn.onclick = () => deleteProblem(category, index);
+
+                    problemDiv.appendChild(checkbox);
+                    problemDiv.appendChild(infoDiv);
+                    problemDiv.appendChild(deleteBtn);
+                    problemsDiv.appendChild(problemDiv);
+                });
+
+                if (!hasVisibleProblems) {
+                    const emptyDiv = document.createElement('div');
+                    emptyDiv.className = 'empty-message';
+                    emptyDiv.textContent = currentFilter === 'completed' ? 'No completed problems yet' : 'All problems completed!';
+                    problemsDiv.appendChild(emptyDiv);
+                }
+
+                categoryDiv.appendChild(header);
+                categoryDiv.appendChild(progressDiv);
+                categoryDiv.appendChild(problemsDiv);
+                container.appendChild(categoryDiv);
+            });
+
+            updateStats();
+        }
+
+        function resetAllProgress() {
+            if (confirm('Are you sure you want to reset all progress? This cannot be undone.')) {
+                Object.keys(progress).forEach(category => {
+                    progress[category] = problems[category].map(() => false);
+                });
+                saveProgress();
+                render();
+            }
+        }
+
+        function exportProgress() {
+            const { total, completed, percent } = getStats();
+            const timestamp = new Date().toLocaleString();
+            let exportText = `DSA Problems Progress Report\n`;
+            exportText += `Generated: ${timestamp}\n`;
+            exportText += `Overall Progress: ${completed}/${total} (${percent}%)\n\n`;
+
+            Object.keys(problems).forEach(category => {
+                const categoryProgress = progress[category];
+                const completed = categoryProgress.filter(p => p).length;
+                const total = categoryProgress.length;
+                exportText += `\n${category} (${completed}/${total}):\n`;
+                exportText += `${'='.repeat(50)}\n`;
+                problems[category].forEach((problem, index) => {
+                    const status = categoryProgress[index] ? '✓' : '○';
+                    exportText += `${status} ${problem.title}\n`;
+                });
+            });
+
+            const blob = new Blob([exportText], { type: 'text/plain' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `dsa-progress-${new Date().toISOString().split('T')[0]}.txt`;
+            a.click();
+            window.URL.revokeObjectURL(url);
+        }
+
+        function printAllProblems() {
+            window.print();
+        }
+
+        window.addEventListener('DOMContentLoaded', initializeProgress);
+    </script>
+</body>
+</html>
